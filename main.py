@@ -17,17 +17,42 @@ API_HASH = os.getenv("API_HASH")
 MY_USER_ID = int(os.getenv("MY_USER_ID"))
 CONTROLLER_BOT = os.getenv("CONTROLLER_BOT")
 
-def restore_session_from_parts(part_count: int):
-    parts = [os.getenv(f"SESSION_PART_{i}") for i in range(part_count)]
-    full_session = ''.join(parts)
-    full_session += '=' * (-len(full_session) % 4)
-    return full_session
+PART_COUNT = int(os.getenv("SESSION_PART_COUNT"))
+SESSION_PATH = "edit_tracker.session"
 
-SESSION_PART_COUNT = int(os.getenv("SESSION_PART_COUNT"))
-SESSION_STRING = restore_session_from_parts(part_count=SESSION_PART_COUNT)
 
-with open("edit_tracker.session", "wb") as f:
-    f.write(base64.b64decode(SESSION_STRING))
+# === Восстановление сессии из переменных среды ===
+def restore_session_from_parts():
+    if not PART_COUNT:
+        print("⚠️ SESSION_PART_COUNT не задан")
+        return False
+
+    try:
+        session_string = ''.join([
+            os.getenv(f"SESSION_PART_{i}") for i in range(PART_COUNT)
+        ])
+        session_string += '=' * (-len(session_string) % 4)
+
+        decoded = base64.b64decode(session_string)
+        with open(SESSION_PATH, "wb") as f:
+            f.write(decoded)
+        print("✅ Сессия восстановлена")
+        return True
+    except Exception as e:
+        print(f"❌ Не удалось восстановить сессию: {e}")
+        return False
+
+
+# === Проверяем наличие сессии до старта ===
+if os.path.exists(SESSION_PATH):
+    print("✅ Сессия найдена")
+else:
+    print("🔄 Попытка восстановить сессию...")
+    success = restore_session_from_parts()
+
+    if not success or not os.path.exists(SESSION_PATH):
+        print("❌ Нет сессии. Запуск невозможен.")
+        exit(1)
 
 original_messages = {}
 ALLOWED_USERS_FILE = "allowed_users.json"
