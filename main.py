@@ -4,6 +4,9 @@ from datetime import datetime
 import base64
 from pyrogram import Client, filters
 from dotenv import load_dotenv
+import pytz
+
+
 
 # Загружаем .env, если он есть
 try:
@@ -69,6 +72,14 @@ else:
 def save_updated_allowed_users():
     with open(ALLOWED_USERS_FILE, "w") as file:
         json.dump(list(ALLOWED_USERS), file)
+
+
+def convert_to_msk(date):
+    """Конвертирует время в UTC+3"""
+    timezone = pytz.timezone('Europe/Moscow')
+    utc_date = date.replace(tzinfo=pytz.UTC)  # Добавляем UTC
+    msk_date = utc_date.astimezone(timezone)
+    return msk_date
 
 
 # Создаем клиент
@@ -141,7 +152,7 @@ async def track_edit(client, message):
 
     user = message.from_user
     chat = message.chat
-    date_str = message.date.strftime("%Y-%m-%d %H:%M:%S")
+    date_str = convert_to_msk(message.date.strftime("%Y-%m-%d %H:%M:%S"))
 
     # Формируем сообщение
     formatted_msg = format_message(user, chat, original_text, new_text, date_str)
