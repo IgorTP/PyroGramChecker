@@ -1,18 +1,33 @@
 import os
 import json
 from datetime import datetime
+import base64
 from pyrogram import Client, filters
-
 from dotenv import load_dotenv
 
 # Загружаем .env, если он есть
-load_dotenv()
+try:
+    load_dotenv()
+except Exception as e:
+    print(e)
 
 # ===== Настройки =====
 API_ID = int(os.getenv("API_ID"))
 API_HASH = os.getenv("API_HASH")
 MY_USER_ID = int(os.getenv("MY_USER_ID"))
 CONTROLLER_BOT = os.getenv("CONTROLLER_BOT")
+
+def restore_session_from_parts(part_count: int):
+    parts = [os.getenv(f"SESSION_PART_{i}") for i in range(part_count)]
+    full_session = ''.join(parts)
+    full_session += '=' * (-len(full_session) % 4)
+    return full_session
+
+SESSION_PART_COUNT = int(os.getenv("SESSION_PART_COUNT"))
+SESSION_STRING = restore_session_from_parts(part_count=SESSION_PART_COUNT)
+
+with open("edit_tracker.session", "wb") as f:
+    f.write(base64.b64decode(SESSION_STRING))
 
 original_messages = {}
 ALLOWED_USERS_FILE = "allowed_users.json"
