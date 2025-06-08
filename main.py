@@ -152,7 +152,7 @@ async def track_edit(client, message):
 
     user = message.from_user
     chat = message.chat
-    date_str = convert_to_msk(message.date.strftime("%Y-%m-%d %H:%M:%S"))
+    date_str = convert_to_msk(message.date)
 
     # Формируем сообщение
     formatted_msg = format_message(user, chat, original_text, new_text, date_str)
