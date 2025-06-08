@@ -6,8 +6,6 @@ from pyrogram import Client, filters
 from dotenv import load_dotenv
 import pytz
 
-
-
 # Загружаем .env, если он есть
 try:
     load_dotenv()
@@ -74,12 +72,11 @@ def save_updated_allowed_users():
         json.dump(list(ALLOWED_USERS), file)
 
 
-def convert_to_msk(date):
-    """Конвертирует время в UTC+3"""
+def convert_to_msk(date: datetime) -> str:
+    """Конвертирует время из UTC в MSK и возвращает строку без tzinfo"""
     timezone = pytz.timezone('Europe/Moscow')
-    utc_date = date.replace(tzinfo=pytz.UTC)  # Добавляем UTC
-    msk_date = utc_date.astimezone(timezone)
-    return msk_date
+    msk_time = date.astimezone(timezone)
+    return msk_time.strftime("%Y-%m-%d %H:%M:%S")
 
 
 # Создаем клиент
