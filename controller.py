@@ -4,7 +4,7 @@ import requests
 
 # === Настройки ===
 BOT_TOKEN = "ВАШ_ТОКЕН"
-CONTROLLER_CHAT_ID = 7915314004  # Твой ID
+CONTROLLER_CHAT_ID = ""
 
 bot = telebot.TeleBot(BOT_TOKEN)
 

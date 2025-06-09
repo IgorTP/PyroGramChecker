@@ -6,4 +6,3 @@ env/
 venv/
 *.json
 .env
-controller.py
