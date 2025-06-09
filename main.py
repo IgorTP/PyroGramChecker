@@ -44,23 +44,16 @@ def restore_session_from_parts():
         return False
 
 
-print("🔄 Попытка восстановить сессию...")
-success = restore_session_from_parts()
+# === Проверяем наличие сессии до старта ===
+if os.path.exists(SESSION_PATH):
+    print("✅ Сессия найдена")
+else:
+    print("🔄 Попытка восстановить сессию...")
+    success = restore_session_from_parts()
 
-if not success or not os.path.exists(SESSION_PATH):
-    print("❌ Нет сессии. Запуск невозможен.")
-    exit(1)
-
-# # === Проверяем наличие сессии до старта ===
-# if os.path.exists(SESSION_PATH):
-#     print("✅ Сессия найдена")
-# else:
-#     print("🔄 Попытка восстановить сессию...")
-#     success = restore_session_from_parts()
-#
-#     if not success or not os.path.exists(SESSION_PATH):
-#         print("❌ Нет сессии. Запуск невозможен.")
-#         exit(1)
+    if not success or not os.path.exists(SESSION_PATH):
+        print("❌ Нет сессии. Запуск невозможен.")
+        exit(1)
 
 original_messages = {}
 ALLOWED_USERS_FILE = "allowed_users.json"
